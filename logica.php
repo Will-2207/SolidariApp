@@ -7,7 +7,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // 1. CONFIGURACIÓN
 define('MONGO_URI', getenv('MONGO_URI') ?: 'mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority');
-define('MONGO_DB', getenv('MONGO_DB') ?: 'solidariapp');
+define('MONGO_DB', getenv('MONGO_DB') ?: 'prueba1'); // <-- CORREGIDO AQUÍ: Cambiado 'solidariapp' por 'prueba1'
 define('COL_DONACIONES', 'donaciones');
 define('COL_SOPORTE', 'tickets_soporte');
 
@@ -92,6 +92,3 @@ function procesarSoporte(array $datos): array {
         return ['tipo' => 'error', 'mensaje' => 'Error de conexión a MongoDB: ' . $e->getMessage(), 'token' => null];
     }
 }
-
-// --- AQUÍ DEBERÍAS TENER EL RESTO DE TUS 257 LÍNEAS ORIGINALES ---
-// Si tienes lógica adicional, pégala después de este punto.
