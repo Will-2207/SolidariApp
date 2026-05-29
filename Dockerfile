@@ -10,25 +10,28 @@ RUN apt-get update && apt-get install -y \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Instalamos la extensión (si esto falla por RAM, es el límite de Render)
+# 2. Habilitar mod_rewrite para Apache (Necesario para rutas amigables)
+RUN a2enmod rewrite
+
+# 3. Instalamos la extensión de MongoDB
 RUN pecl install mongodb \
     && docker-php-ext-enable mongodb
 
-# 3. Configuración de Composer
+# 4. Configuración de Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/html
 
-# 4. Copiamos el código
+# 5. Copiamos el código fuente
 COPY . .
 
-# 5. Instalación de dependencias (Usando el flag que te funcionó)
-# Esto evita que Composer falle si detecta algo extraño en la extensión
+# 6. Instalación de dependencias
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-mongodb
 
-# 6. Permisos (Importante para que Apache pueda leer tus archivos)
+# 7. Permisos (Importante para que Apache pueda leer los archivos)
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+# 8. Exponer puerto y comando final
 EXPOSE 80
