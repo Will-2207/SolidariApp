@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <title>Práctica 2 - Despliegue en sitio Render o Railway</title>
+</head>
+<body>
+    <center>
+        <h2>REGISTRO DE GUSTOS POR APRENDIZ</h2>
+    </center>
+    <form action="logica.php" method="post">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Apellidos:</label>
+            <input type="text" required maxlength="200" name="apellidos" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Nombres:</label>
+            <input type="text" required maxlength="200" name="nombres" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Color favorito:</label>
+            <input type="text" required maxlength="200" name="color" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Comida favorita:</label>
+            <input type="text" required maxlength="200" name="comida" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Tipo de literatura y cine:</label>
+            <input type="text" required maxlength="200" name="pelicula" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <button type="submit" class="btn btn-primary">Registrar mi respuesta</button>
+    </form>
+</body>
+</html>
