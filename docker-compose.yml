@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: solidariapp_web
+    ports:
+      - "8080:80"
+    environment:
+      MONGO_URI: "mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_DB: "solidariapp"
+    volumes:
+      # Monta el código fuente en desarrollo (quitar en producción)
+      - .:/var/www/html
+    restart: unless-stopped
