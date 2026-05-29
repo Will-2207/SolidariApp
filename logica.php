@@ -6,8 +6,8 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 // 1. CONFIGURACIÓN
-define('MONGO_URI', getenv('MONGO_URI') ?: 'mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority');
-define('MONGO_DB', getenv('MONGO_DB') ?: 'prueba1'); // <-- CORREGIDO AQUÍ: Cambiado 'solidariapp' por 'prueba1'
+define('MONGO_URI', getenv('MONGO_URI') ?: 'mongodb+srv://usuario_db_cartuji7:TU_NUEVA_CONTRASEÑA_AQUÍ@cluster7.30bhnqx.mongodb.net/?retryWrites=true&w=majority');
+define('MONGO_DB', getenv('MONGO_DB') ?: 'prueba1');
 define('COL_DONACIONES', 'donaciones');
 define('COL_SOPORTE', 'tickets_soporte');
 
