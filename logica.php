@@ -6,7 +6,11 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 // 1. CONFIGURACIÓN
-define('MONGO_URI', getenv('MONGO_URI') ?: 'mongodb+srv://usuario_db_cartuji7:ClaveRedSolidaria2026@cluster7.30bhnqx.mongodb.net/?retryWrites=true&w=majority');
+// 1. CONFIGURACIÓN
+define('MONGO_URI', getenv('MONGO_URI') ?: 'mongodb+srv://cartuji7_db_user:ClaveRedSolidaria2026@cluster7.30bhnqx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster7');
+define('MONGO_DB', getenv('MONGO_DB') ?: 'prueba1');
+define('COL_DONACIONES', 'donaciones');
+define('COL_SOPORTE', 'tickets_soporte');
 define('MONGO_DB', getenv('MONGO_DB') ?: 'prueba1');
 define('COL_DONACIONES', 'donaciones');
 define('COL_SOPORTE', 'tickets_soporte');
