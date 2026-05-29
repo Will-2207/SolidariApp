@@ -4,7 +4,9 @@ $tipo_alerta = '';
 $token_generado = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo_form']) && $_POST['tipo_form'] === 'soporte') {
-    require_once 'logica.php';
+    if (!defined('MONGO_URI')) {
+        require_once __DIR__ . '/logica.php';
+    }
     $resultado = procesarSoporte($_POST);
     $mensaje = $resultado['mensaje'];
     $tipo_alerta = $resultado['tipo'];
