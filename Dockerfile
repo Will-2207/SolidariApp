@@ -1,21 +1,23 @@
 FROM php:8.2-apache
 
-# 1. Dependencias del sistema necesarias
+# 1. Dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     pkg-config \
     libssl-dev \
     ca-certificates \
+    libpq-dev \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Habilitar mod_rewrite para Apache (Necesario para rutas amigables)
+# 2. Habilitar mod_rewrite
 RUN a2enmod rewrite
 
-# 3. Instalamos la extensión de MongoDB
+# 3. Instalamos extensiones (MongoDB y PostgreSQL)
 RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+    && docker-php-ext-enable mongodb \
+    && docker-php-ext-install pdo pdo_pgsql
 
 # 4. Configuración de Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -23,15 +25,14 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/html
 
-# 5. Copiamos el código fuente
+# 5. Copiamos el código
 COPY . .
 
 # 6. Instalación de dependencias
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-mongodb
+RUN composer install --no-dev --optimize-autoloader
 
-# 7. Permisos (Importante para que Apache pueda leer los archivos)
+# 7. Permisos
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# 8. Exponer puerto y comando final
 EXPOSE 80
