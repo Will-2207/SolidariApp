@@ -1,7 +1,6 @@
 <?php
 session_start();
-// Si no hay usuario logueado, redirige al login (suponiendo que existe)
-session_start();
+
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
@@ -13,19 +12,7 @@ $mensaje = '';
 $tipo_alerta = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo_form']) && $_POST['tipo_form'] === 'donacion') {
-    // Pasamos los datos Y el ID del usuario de la sesión
     $resultado = procesarDonacion($_POST, $_SESSION['usuario_id']);
-    $mensaje = $resultado['mensaje'];
-    $tipo_alerta = $resultado['tipo'];
-}
-?>
-// Incluir lógica si viene de un POST
-$mensaje = '';
-$tipo_alerta = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo_form']) && $_POST['tipo_form'] === 'donacion') {
-    require_once 'logica.php';
-    $resultado = procesarDonacion($_POST);
     $mensaje = $resultado['mensaje'];
     $tipo_alerta = $resultado['tipo'];
 }
