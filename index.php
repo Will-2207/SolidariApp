@@ -1,9 +1,10 @@
 <?php
 session_start();
 // Si no hay usuario logueado, redirige al login (suponiendo que existe)
+session_start();
 if (!isset($_SESSION['usuario_id'])) {
-    // Para pruebas, puedes dejar un ID fijo o redirigir
-    $_SESSION['usuario_id'] = 1; 
+    header("Location: login.php");
+    exit;
 }
 
 require_once 'logica.php';
