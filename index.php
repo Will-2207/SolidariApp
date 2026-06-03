@@ -1,4 +1,23 @@
 <?php
+session_start();
+// Si no hay usuario logueado, redirige al login (suponiendo que existe)
+if (!isset($_SESSION['usuario_id'])) {
+    // Para pruebas, puedes dejar un ID fijo o redirigir
+    $_SESSION['usuario_id'] = 1; 
+}
+
+require_once 'logica.php';
+
+$mensaje = '';
+$tipo_alerta = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo_form']) && $_POST['tipo_form'] === 'donacion') {
+    // Pasamos los datos Y el ID del usuario de la sesión
+    $resultado = procesarDonacion($_POST, $_SESSION['usuario_id']);
+    $mensaje = $resultado['mensaje'];
+    $tipo_alerta = $resultado['tipo'];
+}
+?>
 // Incluir lógica si viene de un POST
 $mensaje = '';
 $tipo_alerta = '';
@@ -533,15 +552,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tipo_form']) && $_POS
               <input type="hidden" name="tipo_form" value="donacion"/>
 
               <div class="row g-3">
-                <div class="col-12">
-                  <label class="form-label" for="nombre">Nombre del donante</label>
-                  <div class="input-group">
-                    <span class="input-prefix"><i class="bi bi-person"></i></span>
-                    <input type="text" class="form-control" id="nombre" name="nombre"
-                           placeholder="Ej. María González" required
-                           value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>"/>
-                  </div>
-                </div>
+  <div class="col-12">
+    <label class="form-label" for="nombre">Nombre del donante</label>
+    <div class="input-group">
+      <span class="input-prefix"><i class="bi bi-person"></i></span>
+      <input type="text" class="form-control" id="nombre" name="nombre_contacto"
+             placeholder="Ej. María González" required
+             value="<?= htmlspecialchars($_POST['nombre_contacto'] ?? '') ?>"/>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <label class="form-label" for="email">Correo electrónico</label>
+    <div class="input-group">
+      <span class="input-prefix"><i class="bi bi-envelope"></i></span>
+      <input type="email" class="form-control" id="email" name="email_contacto"
+             placeholder="Ej. correo@ejemplo.com" required
+             value="<?= htmlspecialchars($_POST['email_contacto'] ?? '') ?>"/>
+    </div>
+  </div>
+  
 
                 <div class="col-12 col-sm-6">
                   <label class="form-label" for="tipo_ayuda">Tipo de ayuda</label>
