@@ -8,22 +8,27 @@ function generarUUID(): string {
 }
 
 function procesarDonacion(array $datos, int $usuarioId): array {
-    $nombre = trim(strip_tags($datos['nombre_contacto'] ?? ''));
-    $email = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
-    $monto = (float)($datos['monto'] ?? 0);
-    $token = generarUUID();
+    // Captura de datos básicos y nuevos campos para el flujo diferenciado
+    $tipoAyuda = $datos['tipo_ayuda'] ?? 'monetaria'; // 'fisica' o 'monetaria'
+    $campana   = $datos['campana_social'] ?? 'General';
+    $nombre    = trim(strip_tags($datos['nombre_contacto'] ?? ''));
+    $email     = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $monto     = (float)($datos['monto'] ?? 0);
+    $token     = generarUUID();
 
-    if (!$nombre || !$email || $monto <= 0) {
-        return ['tipo' => 'error', 'mensaje' => 'Datos inválidos.'];
+    if (!$nombre || !$email) {
+        return ['tipo' => 'error', 'mensaje' => 'Datos de contacto inválidos.'];
     }
 
     $estado = ['pg' => false, 'mg' => false];
 
-    // 1. PostgreSQL
+    // 1. PostgreSQL (Refactorizado para incluir tipo y campaña)
     try {
         $db = \SolidariApp\Database::getConnection();
-        $stmt = $db->prepare("INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id) VALUES (?, ?, ?, ?, ?)");
-        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId]);
+        $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id, tipo_ayuda, campana) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId, $tipoAyuda, $campana]);
     } catch (\Exception $e) {
         $estado['error_pg'] = $e->getMessage();
     }
@@ -36,12 +41,14 @@ function procesarDonacion(array $datos, int $usuarioId): array {
             $manager = new \MongoDB\Driver\Manager($uri);
             $bulk = new \MongoDB\Driver\BulkWrite;
             $bulk->insert([
-                'token_uuid' => $token,
-                'usuario_id' => $usuarioId,
+                'token_uuid'      => $token,
+                'usuario_id'      => $usuarioId,
                 'nombre_contacto' => $nombre,
-                'email' => $email,
-                'monto' => $monto,
-                'created_at' => date('Y-m-d H:i:s')
+                'email'           => $email,
+                'monto'           => $monto,
+                'tipo_ayuda'      => $tipoAyuda,
+                'campana'         => $campana,
+                'created_at'      => date('Y-m-d H:i:s')
             ]);
             $manager->executeBulkWrite($dbName . '.donaciones', $bulk);
             $estado['mg'] = true;
@@ -50,8 +57,10 @@ function procesarDonacion(array $datos, int $usuarioId): array {
         $estado['error_mg'] = $e->getMessage();
     }
 
+    // Respuesta final
     if ($estado['pg'] && $estado['mg']) {
-        return ['tipo' => 'success', 'mensaje' => '¡Éxito! Registrado en PG y MongoDB.', 'token' => $token];
+        $msg = ($tipoAyuda === 'monetaria') ? 'Donación monetaria registrada. ¡Ayudaste a cambiar vidas! ❤️' : 'Solicitud física registrada. Gracias por tu aporte.';
+        return ['tipo' => 'success', 'mensaje' => $msg, 'token' => $token];
     } else {
         return ['tipo' => 'warning', 'mensaje' => 'Registro parcial. PG: ' . ($estado['pg'] ? 'OK' : 'FAIL') . ' | Mongo: ' . ($estado['mg'] ? 'OK' : 'FAIL')];
     }
