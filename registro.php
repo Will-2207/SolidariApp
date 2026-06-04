@@ -1,6 +1,7 @@
 <?php
-require_once 'src/AuthManager.php';
+session_start();
 require_once 'src/Database.php';
+require_once 'src/AuthManager.php';
 
 use SolidariApp\AuthManager;
 
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: login.php?msg=registrado");
         exit;
     } else {
-        $error = "Error al registrar usuario.";
+        $error = "Error al registrar. Verifica los datos.";
     }
 }
 ?>
