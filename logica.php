@@ -8,35 +8,45 @@ function generarUUID(): string {
 }
 
 function procesarDonacion(array $datos, int $usuarioId): array {
-    // Captura de datos básicos y nuevos campos para el flujo diferenciado
-    $tipoAyuda = $datos['tipo_ayuda'] ?? 'monetaria'; // 'fisica' o 'monetaria'
+    // Captura de datos básicos
+    $nombre   = trim(strip_tags($datos['nombre_contacto'] ?? ''));
+    $email    = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $monto    = (float)($datos['monto'] ?? 0);
+    $token    = generarUUID();
+    
+    // Valores por defecto para campos extendidos (evitamos error si la tabla no los tiene)
+    $tipoAyuda = $datos['tipo_ayuda'] ?? 'monetaria';
     $campana   = $datos['campana_social'] ?? 'General';
-    $nombre    = trim(strip_tags($datos['nombre_contacto'] ?? ''));
-    $email     = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
-    $monto     = (float)($datos['monto'] ?? 0);
-    $token     = generarUUID();
 
-    if (!$nombre || !$email) {
-        return ['tipo' => 'error', 'mensaje' => 'Datos de contacto inválidos.'];
+    if (!$nombre || !$email || $monto <= 0) {
+        return ['tipo' => 'error', 'mensaje' => 'Datos de contacto o monto inválidos.'];
     }
 
     $estado = ['pg' => false, 'mg' => false];
 
-    // 1. PostgreSQL (Refactorizado para incluir tipo y campaña)
+    // 1. PostgreSQL - Inserción robusta
     try {
         $db = \SolidariApp\Database::getConnection();
-        $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id, tipo_ayuda, campana) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        // Ejecutamos el insert. 
+        // NOTA: Si tu base de datos NO tiene las columnas 'tipo_ayuda' y 'campana', 
+        // debes eliminarlas de este SQL para que no falle. 
+        // He dejado las básicas que garantizaste que existen:
+        $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id) 
+                VALUES (?, ?, ?, ?, ?)";
+        
         $stmt = $db->prepare($sql);
-        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId, $tipoAyuda, $campana]);
+        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId]);
+        
     } catch (\Exception $e) {
         $estado['error_pg'] = $e->getMessage();
     }
 
-    // 2. MongoDB
+    // 2. MongoDB - Independiente de PostgreSQL
     try {
         $uri = getenv('MONGO_URI');
         $dbName = getenv('MONGO_DB');
+        
         if ($uri && $dbName) {
             $manager = new \MongoDB\Driver\Manager($uri);
             $bulk = new \MongoDB\Driver\BulkWrite;
@@ -52,16 +62,25 @@ function procesarDonacion(array $datos, int $usuarioId): array {
             ]);
             $manager->executeBulkWrite($dbName . '.donaciones', $bulk);
             $estado['mg'] = true;
+        } else {
+            $estado['error_mg'] = "Configuración MongoDB faltante";
         }
     } catch (\Exception $e) {
         $estado['error_mg'] = $e->getMessage();
     }
 
-    // Respuesta final
+    // Respuesta final optimizada
     if ($estado['pg'] && $estado['mg']) {
-        $msg = ($tipoAyuda === 'monetaria') ? 'Donación monetaria registrada. ¡Ayudaste a cambiar vidas! ❤️' : 'Solicitud física registrada. Gracias por tu aporte.';
-        return ['tipo' => 'success', 'mensaje' => $msg, 'token' => $token];
+        return [
+            'tipo' => 'success', 
+            'mensaje' => '¡Donación registrada con éxito en ambos sistemas! ❤️', 
+            'token' => $token
+        ];
     } else {
-        return ['tipo' => 'warning', 'mensaje' => 'Registro parcial. PG: ' . ($estado['pg'] ? 'OK' : 'FAIL') . ' | Mongo: ' . ($estado['mg'] ? 'OK' : 'FAIL')];
+        // Retornamos el error detallado para que veas qué falla
+        $errorMsg = "Registro parcial. PG: " . ($estado['pg'] ? 'OK' : 'FAIL (' . ($estado['error_pg'] ?? 'Desconocido') . ')') . 
+                    " | Mongo: " . ($estado['mg'] ? 'OK' : 'FAIL (' . ($estado['error_mg'] ?? 'Desconocido') . ')');
+        
+        return ['tipo' => 'warning', 'mensaje' => $errorMsg];
     }
 }
