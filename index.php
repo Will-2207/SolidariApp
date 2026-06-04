@@ -9,17 +9,30 @@ use function SolidariApp\procesarDonacion;
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = procesarDonacion($_POST, $_SESSION['usuario_id']);
-    // Clase de alerta dinámica según el resultado
     $class = ($res['tipo'] == 'success') ? 'alert-success' : 'alert-warning';
-    
-    // Mensaje mejorado con validación de estado PG/Mongo
     $msg = "<div class='alert $class border-0 shadow-sm rounded-pill mt-3'>{$res['mensaje']}</div>";
 }
 
+// 1. Consulta PostgreSQL
 $db = Database::getConnection();
 $stmt = $db->prepare("SELECT * FROM donaciones WHERE usuario_id = ? ORDER BY created_at DESC");
 $stmt->execute([$_SESSION['usuario_id']]);
-$donaciones = $stmt->fetchAll();
+$donaciones_pg = $stmt->fetchAll();
+
+// 2. Consulta MongoDB
+$donaciones_mg = [];
+try {
+    $uri = getenv('MONGO_URI');
+    $dbName = getenv('MONGO_DB');
+    if ($uri && $dbName) {
+        $manager = new \MongoDB\Driver\Manager($uri);
+        $query = new \MongoDB\Driver\Query(['usuario_id' => $_SESSION['usuario_id']], ['sort' => ['created_at' => -1]]);
+        $cursor = $manager->executeQuery($dbName . '.donaciones', $query);
+        $donaciones_mg = $cursor->toArray();
+    }
+} catch (\Exception $e) {
+    // Silencioso para no romper la interfaz si Mongo falla
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -67,23 +80,36 @@ $donaciones = $stmt->fetchAll();
         </div>
 
         <div class="col-lg-8">
-            <div class="card card-custom">
-                <h4 class="mb-4"><i class="fas fa-history me-2"></i>Historial de Donaciones</h4>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr><th>Monto</th><th>Token</th><th>Fecha</th></tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($donaciones as $d): ?>
-                            <tr>
-                                <td class="fw-bold text-primary">$<?= number_format($d['monto'], 2) ?></td>
-                                <td><span class="badge bg-light text-dark font-monospace"><?= $d['token_uuid'] ?></span></td>
-                                <td class="text-muted small"><?= $d['created_at'] ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card card-custom border-top border-4 border-primary">
+                        <h4 class="mb-3"><i class="fas fa-database me-2 text-primary"></i>PostgreSQL</h4>
+                        <table class="table align-middle">
+                            <tbody>
+                                <?php foreach ($donaciones_pg as $d): ?>
+                                <tr>
+                                    <td><b class="text-primary">$<?= number_format($d['monto'], 2) ?></b></td>
+                                    <td class="small text-muted"><?= substr($d['token_uuid'], 0, 8) ?>...</td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-custom border-top border-4 border-success">
+                        <h4 class="mb-3"><i class="fas fa-leaf me-2 text-success"></i>MongoDB</h4>
+                        <table class="table align-middle">
+                            <tbody>
+                                <?php foreach ($donaciones_mg as $m): ?>
+                                <tr>
+                                    <td><b class="text-success">$<?= number_format($m->monto, 2) ?></b></td>
+                                    <td class="small text-muted"><?= substr($m->token_uuid, 0, 8) ?>...</td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
