@@ -69,18 +69,19 @@ function procesarDonacion(array $datos, int $usuarioId): array {
     error_log("Resultado PG: " . ($estado['pg'] ? '1' : '0'));
     error_log("Resultado MG: " . ($estado['mg'] ? '1' : '0'));
 
+    // Construcción de mensaje detallado para ambas bases
+    $mensajePG = $estado['pg'] ? "Exitoso en PostgreSQL" : "Fallo en PostgreSQL (" . ($estado['error_pg'] ?? 'Error') . ")";
+    $mensajeMG = $estado['mg'] ? "Exitoso en MongoDB" : "Fallo en MongoDB (" . ($estado['error_mg'] ?? 'Error') . ")";
+
     if ($estado['pg'] && $estado['mg']) {
         return [
             'tipo' => 'success', 
-            'mensaje' => '¡Éxito! Tu ayuda fue registrada correctamente en nuestra base de datos centralizada. ❤️'
+            'mensaje' => "¡Donación realizada! $mensajePG y $mensajeMG. ❤️"
         ];
     } else {
-        // Esto te dirá específicamente si algo falló
         return [
             'tipo' => 'warning', 
-            'mensaje' => 'Atención: Registro parcial. PG: ' . ($estado['pg'] ? 'OK' : 'FAIL') . 
-                         ' | Mongo: ' . ($estado['mg'] ? 'OK' : 'FAIL') . 
-                         (isset($estado['error_mg']) ? ' - Error Mongo: ' . $estado['error_mg'] : '')
+            'mensaje' => "Atención: $mensajePG | $mensajeMG"
         ];
     }
 }
