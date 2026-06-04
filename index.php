@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 if (!isset($_SESSION['usuario_id'])) { header("Location: login.php"); exit; }
@@ -30,7 +31,9 @@ try {
         $cursor = $manager->executeQuery($dbName . '.donaciones', $query);
         $donaciones_mg = $cursor->toArray();
     }
-} catch (\Exception $e) {}
+} catch (\Exception $e) {
+    // Error silencioso para no afectar la interfaz
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -68,30 +71,13 @@ try {
 
     <div class="row g-4">
         <div class="col-lg-4">
-            <form method="POST" class="card card-custom mb-4">
+            <form method="POST" class="card card-custom">
                 <h4 class="mb-4"><i class="fas fa-hand-holding-heart me-2"></i>Realizar Donación</h4>
                 <input name="nombre_contacto" class="form-control mb-3 rounded-pill" placeholder="Nombre" required>
                 <input name="email_contacto" class="form-control mb-3 rounded-pill" placeholder="Email" required>
                 <input name="monto" type="number" step="0.01" class="form-control mb-3 rounded-pill" placeholder="Monto $" required>
                 <button type="submit" class="btn btn-custom w-100">Donar ahora</button>
             </form>
-
-            <div class="card card-custom">
-                <h4 class="mb-4"><i class="fas fa-list me-2"></i>Tu Historial Reciente</h4>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead><tr><th>PG</th><th>MG</th></tr></thead>
-                        <tbody>
-                            <?php foreach ($donaciones_pg as $index => $d): ?>
-                            <tr>
-                                <td class="text-primary fw-bold">$<?= number_format($d['monto'], 2) ?></td>
-                                <td class="text-success fw-bold"><?= isset($donaciones_mg[$index]) ? '$' . number_format($donaciones_mg[$index]->monto, 2) : '-' ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <div class="col-lg-8">
@@ -129,6 +115,31 @@ try {
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card card-custom">
+                <h4 class="mb-4"><i class="fas fa-list me-2"></i>Tu Historial Reciente</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Fecha</th><th>Token</th><th>Nombre</th><th>Email</th><th>Valor PG</th><th>Valor MG</th></tr></thead>
+                        <tbody>
+                            <?php foreach ($donaciones_pg as $index => $d): ?>
+                            <tr>
+                                <td class="small"><?= $d['created_at'] ?></td>
+                                <td class="font-monospace"><?= substr($d['token_uuid'], 0, 10) ?>...</td>
+                                <td><?= htmlspecialchars($d['nombre_contacto']) ?></td>
+                                <td><?= htmlspecialchars($d['email_contacto']) ?></td>
+                                <td class="fw-bold text-primary">$<?= number_format($d['monto'], 2) ?></td>
+                                <td class="fw-bold text-success"><?= isset($donaciones_mg[$index]) ? '$' . number_format($donaciones_mg[$index]->monto, 2) : '-' ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer class="text-center py-4 mt-5 text-muted small">
@@ -136,3 +147,4 @@ try {
 </footer>
 </body>
 </html>
+
