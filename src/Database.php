@@ -1,18 +1,20 @@
 <?php
 namespace SolidariApp;
-
 use PDO;
-use PDOException;
 
 class Database {
     public static function getConnection(): PDO {
-        $host = getenv('DB_HOST') ?: 'localhost';
-        $db   = getenv('DB_NAME') ?: 'solidariapp';
-        $user = getenv('DB_USER') ?: 'postgres';
-        $pass = getenv('DB_PASS') ?: 'tu_password';
+        // Leemos la URL completa desde la variable de entorno
+        $url = getenv('DATABASE_URL');
+        $db = parse_url($url);
 
-        $dsn = "pgsql:host=$host;dbname=$db";
-        
+        $host = $db["host"];
+        $port = $db["port"];
+        $dbname = ltrim($db["path"], "/");
+        $user = $db["user"];
+        $pass = $db["pass"];
+
+        $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
         return new PDO($dsn, $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
