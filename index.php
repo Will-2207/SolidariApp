@@ -9,7 +9,10 @@ use function SolidariApp\procesarDonacion;
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = procesarDonacion($_POST, $_SESSION['usuario_id']);
+    // Clase de alerta dinámica según el resultado
     $class = ($res['tipo'] == 'success') ? 'alert-success' : 'alert-warning';
+    
+    // Mensaje mejorado con validación de estado PG/Mongo
     $msg = "<div class='alert $class border-0 shadow-sm rounded-pill mt-3'>{$res['mensaje']}</div>";
 }
 
@@ -59,7 +62,7 @@ $donaciones = $stmt->fetchAll();
                 <input name="nombre_contacto" class="form-control mb-3 rounded-pill" placeholder="Nombre" required>
                 <input name="email_contacto" class="form-control mb-3 rounded-pill" placeholder="Email" required>
                 <input name="monto" type="number" step="0.01" class="form-control mb-3 rounded-pill" placeholder="Monto $" required>
-                <button class="btn btn-custom w-100">Donar ahora</button>
+                <button type="submit" class="btn btn-custom w-100">Donar ahora</button>
             </form>
         </div>
 
