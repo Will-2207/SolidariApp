@@ -9,14 +9,15 @@ function generarUUID(): string {
 
 function procesarDonacion(array $datos, int $usuarioId): array {
     // Captura de datos básicos
-    $nombre   = trim(strip_tags($datos['nombre_contacto'] ?? ''));
-    $email    = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
-    $monto    = (float)($datos['monto'] ?? 0);
-    $token    = generarUUID();
+    $nombre    = trim(strip_tags($datos['nombre_contacto'] ?? ''));
+    $email     = filter_var(trim($datos['email_contacto'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $monto     = (float)($datos['monto'] ?? 0);
+    $token     = generarUUID();
     
-    // Valores por defecto para campos extendidos (evitamos error si la tabla no los tiene)
+    // Valores para campos adicionales que tu tabla ya tiene
     $tipoAyuda = $datos['tipo_ayuda'] ?? 'monetaria';
-    $campana   = $datos['campana_social'] ?? 'General';
+    $desc      = 'Donación registrada desde SolidariApp';
+    $fundacion = 'General';
 
     if (!$nombre || !$email || $monto <= 0) {
         return ['tipo' => 'error', 'mensaje' => 'Datos de contacto o monto inválidos.'];
@@ -24,21 +25,21 @@ function procesarDonacion(array $datos, int $usuarioId): array {
 
     $estado = ['pg' => false, 'mg' => false];
 
-    // 1. PostgreSQL - Inserción robusta
+    // 1. PostgreSQL - Corregido para incluir todas las columnas de tu tabla
     try {
         $db = \SolidariApp\Database::getConnection();
         
-        $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id) 
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id, tipo_ayuda, descripcion, fundacion_destino) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $db->prepare($sql);
-        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId]);
+        $estado['pg'] = $stmt->execute([$nombre, $email, $monto, $token, $usuarioId, $tipoAyuda, $desc, $fundacion]);
         
     } catch (\Exception $e) {
         $estado['error_pg'] = $e->getMessage();
     }
 
-    // 2. MongoDB - Independiente de PostgreSQL
+    // 2. MongoDB
     try {
         $uri = getenv('MONGO_URI');
         $dbName = getenv('MONGO_DB');
@@ -53,35 +54,25 @@ function procesarDonacion(array $datos, int $usuarioId): array {
                 'email'           => $email,
                 'monto'           => $monto,
                 'tipo_ayuda'      => $tipoAyuda,
-                'campana'         => $campana,
                 'created_at'      => date('Y-m-d H:i:s')
             ]);
             $manager->executeBulkWrite($dbName . '.donaciones', $bulk);
             $estado['mg'] = true;
-        } else {
-            $estado['error_mg'] = "Configuración MongoDB faltante";
         }
     } catch (\Exception $e) {
         $estado['error_mg'] = $e->getMessage();
     }
 
-    // Log para depuración
-    error_log("Resultado PG: " . ($estado['pg'] ? '1' : '0'));
-    error_log("Resultado MG: " . ($estado['mg'] ? '1' : '0'));
-
-    // Construcción de mensaje detallado para ambas bases
-    $mensajePG = $estado['pg'] ? "Exitoso en PostgreSQL" : "Fallo en PostgreSQL (" . ($estado['error_pg'] ?? 'Error') . ")";
-    $mensajeMG = $estado['mg'] ? "Exitoso en MongoDB" : "Fallo en MongoDB (" . ($estado['error_mg'] ?? 'Error') . ")";
-
+    // Respuesta final
     if ($estado['pg'] && $estado['mg']) {
         return [
             'tipo' => 'success', 
-            'mensaje' => "¡Donación realizada! $mensajePG y $mensajeMG. ❤️"
+            'mensaje' => "¡Donación realizada! Exitoso en PostgreSQL y Exitoso en MongoDB. ❤️"
         ];
     } else {
         return [
             'tipo' => 'warning', 
-            'mensaje' => "Atención: $mensajePG | $mensajeMG"
+            'mensaje' => "Registro parcial. PG: " . ($estado['pg'] ? 'OK' : 'FAIL') . " | Mongo: " . ($estado['mg'] ? 'OK' : 'FAIL')
         ];
     }
 }
