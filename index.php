@@ -12,9 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $class = ($res['tipo'] == 'success') ? 'alert-success' : 'alert-warning';
     $msg = "<div class='alert $class'>{$res['mensaje']}</div>";
 }
+
 $db = Database::getConnection();
-$donaciones = $db->prepare("SELECT * FROM donaciones WHERE usuario_id = ? ORDER BY created_at DESC");
-$donaciones->execute([$_SESSION['usuario_id']]);
+$stmt = $db->prepare("SELECT * FROM donaciones WHERE usuario_id = ? ORDER BY created_at DESC");
+$stmt->execute([$_SESSION['usuario_id']]);
+$donaciones = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,14 +25,38 @@ $donaciones->execute([$_SESSION['usuario_id']]);
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
     <div class="container py-5 flex-grow-1">
-        <h2>Bienvenido, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Bienvenido, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></h2>
+            <a href="logout.php" class="btn btn-danger btn-sm">Cerrar Sesión</a>
+        </div>
+        
         <?= $msg ?>
-        <form method="POST" class="card p-3 mb-4 shadow-sm">
+        
+        <form method="POST" class="card p-4 mb-4 shadow-sm">
+            <h4 class="mb-3">Realizar Donación</h4>
             <input name="nombre_contacto" class="form-control mb-2" placeholder="Nombre" required>
             <input name="email_contacto" class="form-control mb-2" placeholder="Email" required>
-            <input name="monto" type="number" class="form-control mb-2" placeholder="Monto" required>
+            <input name="monto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto" required>
             <button class="btn btn-success">Donar ahora</button>
         </form>
+
+        <div class="card p-4 shadow-sm">
+            <h4>Mis Donaciones</h4>
+            <table class="table mt-3">
+                <thead>
+                    <tr><th>Monto</th><th>Token</th><th>Fecha</th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($donaciones as $d): ?>
+                    <tr>
+                        <td>$<?= number_format($d['monto'], 2) ?></td>
+                        <td><small class="text-muted"><?= $d['token_uuid'] ?></small></td>
+                        <td><?= $d['created_at'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <footer class="bg-dark text-white text-center py-4 mt-auto">
