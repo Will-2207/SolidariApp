@@ -2,59 +2,44 @@
 session_start();
 if (!isset($_SESSION['usuario_id'])) { header("Location: login.php"); exit; }
 require_once 'src/Database.php';
-require_once 'logica.php'; // Incluimos la lógica de doble persistencia
-
+require_once 'logica.php';
 use SolidariApp\Database;
 use function SolidariApp\procesarDonacion;
 
-$mensaje = '';
+$msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $resultado = procesarDonacion($_POST, $_SESSION['usuario_id']);
-    $mensaje = "<div class='alert alert-info'>{$resultado['mensaje']}</div>";
+    $res = procesarDonacion($_POST, $_SESSION['usuario_id']);
+    $class = ($res['tipo'] == 'success') ? 'alert-success' : 'alert-warning';
+    $msg = "<div class='alert $class'>{$res['mensaje']}</div>";
 }
-
 $db = Database::getConnection();
-$stmt = $db->prepare("SELECT * FROM donaciones WHERE usuario_id = ? ORDER BY created_at DESC");
-$stmt->execute([$_SESSION['usuario_id']]);
-$mis_donaciones = $stmt->fetchAll();
+$donaciones = $db->prepare("SELECT * FROM donaciones WHERE usuario_id = ? ORDER BY created_at DESC");
+$donaciones->execute([$_SESSION['usuario_id']]);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>SolidariApp — Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-  <div class="container py-5">
-    <h2>Bienvenido, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></h2>
-    <?= $mensaje ?>
-
-    <div class="card p-4 mb-4">
-      <h4>Realizar Donación</h4>
-      <form method="POST">
-        <input type="text" name="nombre_contacto" class="form-control mb-2" placeholder="Nombre" required>
-        <input type="email" name="email_contacto" class="form-control mb-2" placeholder="Email" required>
-        <input type="number" name="monto" class="form-control mb-2" placeholder="Monto" required>
-        <button type="submit" class="btn btn-success">Donar ahora</button>
-      </form>
+<body class="bg-light d-flex flex-column min-vh-100">
+    <div class="container py-5 flex-grow-1">
+        <h2>Bienvenido, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></h2>
+        <?= $msg ?>
+        <form method="POST" class="card p-3 mb-4 shadow-sm">
+            <input name="nombre_contacto" class="form-control mb-2" placeholder="Nombre" required>
+            <input name="email_contacto" class="form-control mb-2" placeholder="Email" required>
+            <input name="monto" type="number" class="form-control mb-2" placeholder="Monto" required>
+            <button class="btn btn-success">Donar ahora</button>
+        </form>
     </div>
 
-    <div class="card p-4">
-      <h4>Mis Donaciones</h4>
-      <table class="table">
-        <thead><tr><th>Monto</th><th>Token</th><th>Fecha</th></tr></thead>
-        <tbody>
-          <?php foreach($mis_donaciones as $d): ?>
-            <tr>
-              <td>$<?= number_format($d['monto'], 2) ?></td>
-              <td><code><?= $d['token_uuid'] ?></code></td>
-              <td><?= $d['created_at'] ?></td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <footer class="bg-dark text-white text-center py-4 mt-auto">
+        <div class="mb-2">
+            <span class="badge bg-primary">PHP</span> <span class="badge bg-success">MongoDB</span> 
+            <span class="badge bg-info">Render</span> <span class="badge bg-warning text-dark">Python</span> 
+            <span class="badge bg-danger">Java</span>
+        </div>
+        <p class="mb-0">SolidariApp - ADSO | Desarrollador Junior: Will Morales</p>
+    </footer>
 </body>
 </html>
