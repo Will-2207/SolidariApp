@@ -28,10 +28,6 @@ function procesarDonacion(array $datos, int $usuarioId): array {
     try {
         $db = \SolidariApp\Database::getConnection();
         
-        // Ejecutamos el insert. 
-        // NOTA: Si tu base de datos NO tiene las columnas 'tipo_ayuda' y 'campana', 
-        // debes eliminarlas de este SQL para que no falle. 
-        // He dejado las básicas que garantizaste que existen:
         $sql = "INSERT INTO donaciones (nombre_contacto, email_contacto, monto, token_uuid, usuario_id) 
                 VALUES (?, ?, ?, ?, ?)";
         
@@ -69,18 +65,22 @@ function procesarDonacion(array $datos, int $usuarioId): array {
         $estado['error_mg'] = $e->getMessage();
     }
 
-    // Respuesta final optimizada
+    // Log para depuración
+    error_log("Resultado PG: " . ($estado['pg'] ? '1' : '0'));
+    error_log("Resultado MG: " . ($estado['mg'] ? '1' : '0'));
+
     if ($estado['pg'] && $estado['mg']) {
         return [
             'tipo' => 'success', 
-            'mensaje' => '¡Donación registrada con éxito en ambos sistemas! ❤️', 
-            'token' => $token
+            'mensaje' => '¡Éxito! Tu ayuda fue registrada correctamente en nuestra base de datos centralizada. ❤️'
         ];
     } else {
-        // Retornamos el error detallado para que veas qué falla
-        $errorMsg = "Registro parcial. PG: " . ($estado['pg'] ? 'OK' : 'FAIL (' . ($estado['error_pg'] ?? 'Desconocido') . ')') . 
-                    " | Mongo: " . ($estado['mg'] ? 'OK' : 'FAIL (' . ($estado['error_mg'] ?? 'Desconocido') . ')');
-        
-        return ['tipo' => 'warning', 'mensaje' => $errorMsg];
+        // Esto te dirá específicamente si algo falló
+        return [
+            'tipo' => 'warning', 
+            'mensaje' => 'Atención: Registro parcial. PG: ' . ($estado['pg'] ? 'OK' : 'FAIL') . 
+                         ' | Mongo: ' . ($estado['mg'] ? 'OK' : 'FAIL') . 
+                         (isset($estado['error_mg']) ? ' - Error Mongo: ' . $estado['error_mg'] : '')
+        ];
     }
 }
