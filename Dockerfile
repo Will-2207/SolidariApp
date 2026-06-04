@@ -1,39 +1,28 @@
 FROM php:8.2-apache
 
-# 1. Instalar dependencias necesarias para compilar extensiones PHP
+# Instalar dependencias del sistema y el driver de mongodb
+# 'libssl-dev' es necesario para la conexión, pero aquí lo instalamos de forma que no sature la memoria
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
     libssl-dev \
-    libcurl4-openssl-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Instalar el driver de MongoDB (extensión PHP)
-# Se requiere 'pecl' y las librerías de arriba para que compile correctamente
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+# Instalar la extensión a través de PECL, pero SIN forzar una compilación masiva si es posible
+RUN pecl install mongodb && docker-php-ext-enable mongodb
 
-# 3. Habilitar mod_rewrite
+# Habilitar mod_rewrite para Apache
 RUN a2enmod rewrite
 
-# 4. Configurar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 5. Copiar solo archivos de dependencias para caché
-COPY composer.json composer.lock* ./
-
-# 6. Instalar dependencias con verbosidad para ver errores si fallan
-# El --ignore-platform-reqs ayuda si hay discrepancias menores de versión
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# 7. Copiar el resto del código
+# Copiar archivos
 COPY . .
 
-# 8. Permisos
-RUN chown -R www-data:www-data /var/www/html
+# Instalar dependencias de PHP
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-EXPOSE 80
+# Ajustar permisos
+RUN chown -R www-data:www-data /var/www/html
