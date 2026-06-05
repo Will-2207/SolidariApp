@@ -20,38 +20,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
-        
-        .main-container { 
-            width: 90%; max-width: 1100px; background: white; border-radius: 30px; 
-            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
-            display: flex; min-height: 600px; 
-        }
-        
-        /* Izquierda: Imagen estable con ruta absoluta desde la raíz */
-        .left-side { 
-            flex: 1; 
-            position: relative; 
-            background-color: #1e52ff; 
-            background-image: url('assets/foto1.jpg'); 
-            background-size: cover; 
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+    :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
+    body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+    
+    .main-container { 
+        width: 90%; max-width: 1100px; background: white; border-radius: 30px; 
+        overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+        display: flex; min-height: 600px; 
+    }
+    
+    /* Izquierda: Animación de fondo suave entre foto1 y foto2 */
+    .left-side { 
+        flex: 1; 
+        position: relative; 
+        background-color: #1e52ff; 
+        background-size: cover; 
+        background-position: center;
+        background-repeat: no-repeat;
+        animation: cambiarFondo 12s infinite ease-in-out;
+    }
 
-        /* Capa para mejorar legibilidad */
-        .overlay-caption {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            padding: 60px 40px; color: white;
-        }
+    @keyframes cambiarFondo {
+        0%, 45% { background-image: url('assets/foto1.jpg'); }
+        50%, 95% { background-image: url('assets/foto2.jpg'); }
+        100% { background-image: url('assets/foto1.jpg'); }
+    }
 
-        /* Derecha */
-        .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
-        .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; }
-        .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
-    </style>
+    /* Capa para mejorar legibilidad del texto */
+    .overlay-caption {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        padding: 60px 40px; color: white;
+    }
+
+    /* Derecha */
+    .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+    .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; }
+    .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
+</style>
 </head>
 <body>
 
