@@ -49,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="assets/foto1.jpg" alt="Ayuda Educativa">
+                    <img src="assets/descarga%2013.jpg" alt="Ayuda Educativa">
                     <div class="carousel-caption">
                         <h3>Sé parte del cambio</h3>
                         <p>Únete a nuestra red y ayuda a transformar vidas.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="assets/foto2.jpg" alt="Solidaridad">
+                    <img src="assets/descarga%2014.jpg" alt="Solidaridad">
                     <div class="carousel-caption">
                         <h3>Red Solidaria</h3>
                         <p>Tu generosidad construye un futuro brillante.</p>
