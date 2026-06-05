@@ -24,20 +24,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
     .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
     
-    /* Lado Izquierdo - Aseguramos visibilidad */
-    .left-side { flex: 1; position: relative; background: #eee; }
-    .carousel, .carousel-inner, .carousel-item { height: 100%; width: 100%; }
-    .carousel-item img { height: 600px; width: 100%; object-fit: cover; }
+    /* Lado Izquierdo: Solución definitiva */
+    .left-side { 
+        flex: 1; 
+        position: relative; 
+        /* Fondo degradado sólido que actúa como "pre-carga" */
+        background: linear-gradient(135deg, var(--azul-solidario), #00d2ff); 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     
-    /* Estilo del texto que mencionas */
-    .carousel-caption { 
-        background: rgba(0,0,0,0.5); 
-        padding: 20px; 
-        border-radius: 15px; 
-        bottom: 20%; 
+    .carousel-inner, .carousel-item { height: 100%; }
+    
+    .carousel-item img { 
+        height: 100%; width: 100%; 
+        object-fit: cover; 
     }
 
-    /* Derecha: Formulario */
+    /* Caja de texto siempre visible y profesional */
+    .carousel-caption { 
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px); /* Efecto cristal */
+        padding: 40px; 
+        border-radius: 20px; 
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Derecha */
     .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
     .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; }
     .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
