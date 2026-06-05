@@ -19,22 +19,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Registro — SolidariApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
-        
-        .left-side { flex: 1; background: #000; position: relative; overflow: hidden; }
-        .carousel-inner, .carousel-item { height: 100%; }
-        .carousel-item img { height: 100%; width: 100%; object-fit: cover; opacity: 0.7; }
-        .carousel-caption { bottom: 50px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+   <style>
+    :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
+    body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
+    
+    /* Lado Izquierdo - Aseguramos visibilidad */
+    .left-side { flex: 1; position: relative; background: #eee; }
+    .carousel, .carousel-inner, .carousel-item { height: 100%; width: 100%; }
+    .carousel-item img { height: 600px; width: 100%; object-fit: cover; }
+    
+    /* Estilo del texto que mencionas */
+    .carousel-caption { 
+        background: rgba(0,0,0,0.5); 
+        padding: 20px; 
+        border-radius: 15px; 
+        bottom: 20%; 
+    }
 
-        .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
-        .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; transition: 0.4s; }
-        .btn-custom:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(30, 82, 255, 0.3); }
-        .form-control { border-radius: 12px; padding: 12px; border: 1px solid #eee; }
-        .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
-    </style>
+    /* Derecha: Formulario */
+    .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+    .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; }
+    .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
+</style>
 </head>
 <body>
 
