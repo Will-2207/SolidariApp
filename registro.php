@@ -22,22 +22,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
         body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
-        .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
         
-        /* Izquierda: Imagen fija (más estable que el carrusel) */
+        .main-container { 
+            width: 90%; max-width: 1100px; background: white; border-radius: 30px; 
+            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+            display: flex; min-height: 600px; 
+        }
+        
+        /* Izquierda: Imagen estable con ruta absoluta desde la raíz */
         .left-side { 
             flex: 1; 
             position: relative; 
-            background-color: #1e52ff; /* Color de respaldo */
-            background-image: url('assets/descarga13.jpg'); 
+            background-color: #1e52ff; 
+            background-image: url('/assets/descarga13.jpg'); 
             background-size: cover; 
             background-position: center;
+            background-repeat: no-repeat;
         }
 
+        /* Capa para mejorar legibilidad */
         .overlay-caption {
-            position: absolute; bottom: 50px; left: 30px; right: 30px;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 20px; color: white;
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 60px 40px; color: white;
         }
 
         /* Derecha */
@@ -51,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="main-container">
     <div class="left-side">
         <div class="overlay-caption">
-            <h3>Sé parte del cambio</h3>
-            <p>Únete a nuestra red de apoyo social y transforma vidas.</p>
+            <h3 class="fw-bold">Sé parte del cambio</h3>
+            <p>Únete a nuestra red de apoyo social y transforma vidas con nosotros.</p>
         </div>
     </div>
 
