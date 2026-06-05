@@ -16,30 +16,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro — SolidariApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .registro-card { 
-            border-radius: 28px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-            padding: 40px; width: 100%; max-width: 420px; 
-        }
-        .btn-custom { 
-            background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); 
-            color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; 
-            transition: 0.4s; 
-        }
-        .btn-custom:hover { transform: scale(1.02); color: white; box-shadow: 0 5px 15px rgba(30, 82, 255, 0.3); }
+        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; }
+        .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
+        
+        /* Izquierda: Carrusel */
+        .left-side { flex: 1; background: #000; position: relative; }
+        .carousel-item img { height: 600px; object-fit: cover; opacity: 0.7; }
+        .carousel-caption { bottom: 50px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        /* Derecha: Formulario */
+        .right-side { flex: 0 0 450px; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .btn-custom { background: linear-gradient(135deg, var(--azul-solidario), var(--verde-solidario)); color: white; border: none; border-radius: 50px; padding: 12px; font-weight: 600; transition: 0.4s; }
+        .btn-custom:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(30, 82, 255, 0.3); }
         .form-control { border-radius: 12px; padding: 12px; border: 1px solid #eee; }
-        .logo-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 20px; }
+        .logo-img { width: 100px; border-radius: 50%; margin-bottom: 20px; }
     </style>
 </head>
-<body class="d-flex align-items-center justify-content-center vh-100">
+<body class="justify-content-center">
 
-    <div class="card registro-card text-center">
+<div class="main-container">
+    <div class="left-side">
+        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1511632765400-ca8d7099454a?q=80&w=1000" class="d-block w-100" alt="Solidaridad">
+                    <div class="carousel-caption"><h3>Sé parte del cambio</h3><p>Únete a nuestra red de apoyo social.</p></div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1531206715585-50a19e836109?q=80&w=1000" class="d-block w-100" alt="Comunidad">
+                    <div class="carousel-caption"><h3>Red Solidaria</h3><p>Donar es transformar realidades.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-side">
         <img src="Logo.jpeg" alt="Logo" class="logo-img mx-auto">
         <h3 class="fw-bold mb-4">Crear Cuenta</h3>
         
@@ -63,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <p class="text-center mt-4 text-muted">¿Ya tienes cuenta? <a href="login.php" class="text-primary fw-bold text-decoration-none">Inicia sesión</a></p>
     </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
