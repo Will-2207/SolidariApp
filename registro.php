@@ -46,18 +46,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="main-container">
     <div class="left-side">
-        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="https://images.unsplash.com/photo-1511632765400-ca8d7099454a?q=80&w=1000" alt="Solidaridad">
-                    <div class="carousel-caption"><h3>Sé parte del cambio</h3><p>Únete a nuestra red de apoyo social.</p></div>
+                    <img src="assets/foto1.jpg" alt="Ayuda Educativa">
+                    <div class="carousel-caption">
+                        <h3>Sé parte del cambio</h3>
+                        <p>Únete a nuestra red y ayuda a transformar vidas.</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://images.unsplash.com/photo-1531206715585-50a19e836109?q=80&w=1000" alt="Comunidad">
-                    <div class="carousel-caption"><h3>Red Solidaria</h3><p>Donar es transformar realidades.</p></div>
+                    <img src="assets/foto2.jpg" alt="Solidaridad">
+                    <div class="carousel-caption">
+                        <h3>Red Solidaria</h3>
+                        <p>Tu generosidad construye un futuro brillante.</p>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <div class="right-side">
