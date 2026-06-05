@@ -21,19 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
         .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
         
-        /* Izquierda: Degradado base (si la imagen falla, se ve profesional) */
-        .left-side { flex: 1; position: relative; background: linear-gradient(135deg, #1e52ff, #00d2ff); overflow: hidden; }
+        /* Lado Izquierdo: Carrusel Estable */
+        .left-side { flex: 1; position: relative; background: #000; overflow: hidden; }
+        .carousel, .carousel-inner, .carousel-item { height: 100%; width: 100%; }
+        .carousel-item img { 
+            height: 600px; width: 100%; object-fit: cover; 
+            filter: brightness(0.7); /* Oscurece la imagen para resaltar el texto */
+        }
         
-        .carousel, .carousel-inner, .carousel-item { height: 100%; }
-        .carousel-item img { height: 100%; width: 100%; object-fit: cover; filter: brightness(0.7); }
-
         .carousel-caption { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+            bottom: 100px; /* Centrado visual más estable */
         }
 
         /* Derecha */
@@ -46,31 +48,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="main-container">
     <div class="left-side">
-        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="assets/descarga%2013.jpg" alt="Ayuda Educativa">
-                    <div class="carousel-caption">
-                        <h3>Sé parte del cambio</h3>
-                        <p>Únete a nuestra red y ayuda a transformar vidas.</p>
-                    </div>
+                    <img src="assets/descarga13.jpg" alt="Solidaridad">
+                    <div class="carousel-caption"><h3>Sé parte del cambio</h3><p>Únete a nuestra red de apoyo social.</p></div>
                 </div>
                 <div class="carousel-item">
-                    <img src="assets/descarga%2014.jpg" alt="Solidaridad">
-                    <div class="carousel-caption">
-                        <h3>Red Solidaria</h3>
-                        <p>Tu generosidad construye un futuro brillante.</p>
-                    </div>
+                    <img src="assets/descarga14.jpg" alt="Comunidad">
+                    <div class="carousel-caption"><h3>Red Solidaria</h3><p>Donar es transformar realidades.</p></div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <div class="right-side">
         <img src="Logo.jpeg" alt="Logo" class="logo-img mx-auto">
         <h3 class="fw-bold mb-4 text-center">Crear Cuenta</h3>
-        <?php if($error): ?><div class="alert alert-danger border-0 rounded-pill"><?= $error ?></div><?php endif; ?>
+        
+        <?php if($error): ?>
+            <div class="alert alert-danger border-0 rounded-pill"><?= $error ?></div>
+        <?php endif; ?>
+
         <form method="POST">
             <div class="mb-3"><input type="text" name="nombre" class="form-control" placeholder="Nombre completo" required></div>
             <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
