@@ -24,34 +24,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
     .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
     
-    /* Lado Izquierdo: Solución definitiva */
+    /* Lado Izquierdo - Corregido */
     .left-side { 
         flex: 1; 
         position: relative; 
-        /* Fondo degradado sólido que actúa como "pre-carga" */
-        background: linear-gradient(135deg, var(--azul-solidario), #00d2ff); 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background: linear-gradient(135deg, var(--azul-solidario), #00d2ff);
+        overflow: hidden; 
     }
     
-    .carousel-inner, .carousel-item { height: 100%; }
+    .carousel, .carousel-inner, .carousel-item { height: 100%; width: 100%; }
     
     .carousel-item img { 
-        height: 100%; width: 100%; 
-        object-fit: cover; 
+        height: 100%; 
+        width: 100%; 
+        object-fit: cover;
+        display: block;
     }
 
-    /* Caja de texto siempre visible y profesional */
+    /* Caja de texto centrada sobre la imagen */
     .carousel-caption { 
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px); /* Efecto cristal */
-        padding: 40px; 
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        background: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente oscuro */
+        backdrop-filter: blur(8px);
+        padding: 30px; 
         border-radius: 20px; 
-        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        text-align: center;
     }
 
     /* Derecha */
