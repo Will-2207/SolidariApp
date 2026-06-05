@@ -21,21 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --azul-solidario: #1e52ff; --verde-solidario: #63ff5e; }
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
         .main-container { width: 90%; max-width: 1100px; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; min-height: 600px; }
         
-        /* Lado Izquierdo: Carrusel Estable */
-        .left-side { flex: 1; position: relative; background: #000; overflow: hidden; }
-        .carousel, .carousel-inner, .carousel-item { height: 100%; width: 100%; }
-        .carousel-item img { 
-            height: 600px; width: 100%; object-fit: cover; 
-            filter: brightness(0.7); /* Oscurece la imagen para resaltar el texto */
+        /* Izquierda: Imagen fija (más estable que el carrusel) */
+        .left-side { 
+            flex: 1; 
+            position: relative; 
+            background-color: #1e52ff; /* Color de respaldo */
+            background-image: url('assets/descarga13.jpg'); 
+            background-size: cover; 
+            background-position: center;
         }
-        
-        .carousel-caption { 
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
-            padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
-            bottom: 100px; /* Centrado visual más estable */
+
+        .overlay-caption {
+            position: absolute; bottom: 50px; left: 30px; right: 30px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 20px; color: white;
         }
 
         /* Derecha */
@@ -48,17 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="main-container">
     <div class="left-side">
-        <div id="registroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="assets/descarga13.jpg" alt="Solidaridad">
-                    <div class="carousel-caption"><h3>Sé parte del cambio</h3><p>Únete a nuestra red de apoyo social.</p></div>
-                </div>
-                <div class="carousel-item">
-                    <img src="assets/descarga14.jpg" alt="Comunidad">
-                    <div class="carousel-caption"><h3>Red Solidaria</h3><p>Donar es transformar realidades.</p></div>
-                </div>
-            </div>
+        <div class="overlay-caption">
+            <h3>Sé parte del cambio</h3>
+            <p>Únete a nuestra red de apoyo social y transforma vidas.</p>
         </div>
     </div>
 
