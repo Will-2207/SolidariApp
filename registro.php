@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex: 1; 
             position: relative; 
             background-color: #1e52ff; 
-            background-image: url('assets/descarga13.jpg'); 
+            background-image: url('assets/foto1.jpg'); 
             background-size: cover; 
             background-position: center;
             background-repeat: no-repeat;
